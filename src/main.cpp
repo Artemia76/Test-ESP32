@@ -2,12 +2,14 @@
 #include <Adafruit_NeoPixel.h>
 #include <WiFi.h>
 
+#include "env.h"
+
 #define PIN 48
 #define NUMPIXELS 1
 
 // Replace with your network credentials
-const char* ssid = "My SSID";
-const char* password = "My Password";
+const char* ssid = WIFI_SSID;
+const char* password = WIFI_PASSWORD;
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -35,6 +37,7 @@ void setup() {
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Connecting to ");
   Serial.println(ssid);
+
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
