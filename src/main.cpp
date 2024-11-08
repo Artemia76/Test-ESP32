@@ -3,7 +3,7 @@
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 #include <atomic>
-
+#include <regex>
 #include "env.h"
 
 const int led = 48;
@@ -17,11 +17,46 @@ const int DelayOff = 1000;
 
 // Use atomic to share async mutlithreaded 
 std::atomic<double> Lum (1.0);
+std::atomic<bool> Switch (true);
+std::atomic<double> R (0.0);
+std::atomic<double> G (0.0);
+std::atomic<double> B (0.0);
 
 // Set web server port number to 80
 AsyncWebServer server(80);
 
 Adafruit_NeoPixel pixels(1, led, NEO_GRB + NEO_KHZ800);
+
+void set_RGB (double pRed, double pGreen, double pBlue, double pLum)
+{
+  uint8_t R,G,B,W;
+  R= Switch?static_cast<uint8_t>(pRed * 255.0):0.0;
+  G= Switch?static_cast<uint8_t>(pGreen * 255.0):0.0;
+  B= Switch?static_cast<uint8_t>(pBlue * 255.0):0.0;
+  W = Switch?static_cast<uint8_t>(pLum * 255.0):0.0;
+  pixels.setPixelColor(0, pixels.Color(R, G, B, W));
+  pixels.show();
+}
+
+void get_RGB (const String& pHexRGB)
+{
+  std::string HexValue = pHexRGB.c_str();
+  std::regex pattern("#([0-9a-fA-F]{6})");
+  std::smatch match;
+  if (std::regex_match(HexValue, match, pattern))
+  {
+      int r, g, b;
+      sscanf(match.str(1).c_str(), "%2x%2x%2x", &r, &g, &b);
+      R=static_cast<double>(r/255.0);
+      G=static_cast<double>(g/255.0);
+      B=static_cast<double>(b/255.0);
+      Lum = (R + G + B)/3.0;
+      Serial.println(
+        "R=" + String(R) +
+        " G=" + String(G) +
+        " B=" + String(B));
+  }
+}
 
 void setup()
 {
@@ -95,41 +130,37 @@ void setup()
 
   server.on("/on",HTTP_GET, [](AsyncWebServerRequest *request)
   {
-    Lum = 1.0;
+    Switch = true;
     request->send(200);
     Serial.println("Received ON.");
   });
 
   server.on("/off",HTTP_GET, [](AsyncWebServerRequest *request)
   {
-    Lum = 0.0;
+    Switch = false;
     request->send(200);
     Serial.println("Received OFF.");
   });
 
+  server.on("/set",HTTP_POST, [](AsyncWebServerRequest *request)
+  {
+    int paramsNr = request->params();
+    AsyncWebParameter * j = request->getParam(0); // 1st parameter
+    Serial.print("rgb: ");
+    Serial.print(j->value());                     // value ^
+    Serial.println();
+    get_RGB(j->value());
+    request->send(200);
+  });
   server.begin();
   Serial.println("Server Online.");
 }
 
-void set_RGB (double pRed, double pGreen, double pBlue, double pLum)
-{
-  uint8_t R,G,B;
-  R= static_cast<uint8_t>(pRed * pLum * 255.0);
-  G= static_cast<uint8_t>(pGreen * pLum * 255.0);
-  B= static_cast<uint8_t>(pBlue * pLum * 255.0);
-  pixels.setPixelColor(0, pixels.Color(R, G, B));
-  pixels.show();
-}
-
 void loop()
 {
-double R,G,B;
-pixels.clear();
-  R=static_cast<double>(random(255))/255.0;
-  G=static_cast<double>(random(255))/255.0;
-  B=static_cast<double>(random(255))/255.0;
+  pixels.clear();
   set_RGB(R,G,B,Lum);
   delay(DelayOn);
-  set_RGB(R,G,B,0.0);
-  delay(DelayOff);
+  //set_RGB(R,G,B,0.0);
+  //delay(DelayOff);
 }

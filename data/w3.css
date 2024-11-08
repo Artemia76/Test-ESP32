@@ -233,3 +233,121 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .w3-border-dark-grey,.w3-hover-border-dark-grey:hover,.w3-border-dark-gray,.w3-hover-border-dark-gray:hover{border-color:#616161!important}
 .w3-border-pale-red,.w3-hover-border-pale-red:hover{border-color:#ffe7e7!important}.w3-border-pale-green,.w3-hover-border-pale-green:hover{border-color:#e7ffe7!important}
 .w3-border-pale-yellow,.w3-hover-border-pale-yellow:hover{border-color:#ffffcc!important}.w3-border-pale-blue,.w3-hover-border-pale-blue:hover{border-color:#e7ffff!important}
+
+.color-viewer-sliders label {
+    display: block;
+  }
+  
+  .color-viewer-sliders .color-box {
+    width: 200px;
+    height: 200px;
+    border: black solid medium;
+    padding: 0.25em;
+    forced-color-adjust: none;
+  }
+  
+  .color-viewer-sliders .color-info {
+    padding-top: 5px;
+  }
+  
+  .color-viewer-sliders .color-info label {
+    margin-top: 0.25em;
+  }
+  
+  .color-slider {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: auto;
+    margin-bottom: 1em;
+    touch-action: pan-y;
+    width: 350px;
+  }
+  
+  .color-slider div,
+  .color-slider svg {
+    width: 350px;
+  }
+  
+  .color-slider-label {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+  }
+  
+  .color-slider .value {
+    color: currentcolor;
+    fill: currentcolor;
+  }
+  
+  .color-slider .valueBackground {
+    fill: white;
+    stroke-width: 0;
+  }
+  
+  .color-slider .rail {
+    fill: #bbb;
+    stroke: currentcolor;
+    stroke-width: 2px;
+    opacity: 0.8;
+  }
+  
+  .color-slider .fill {
+    stroke-width: 0;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+  .color-slider.red .fill {
+    fill: red;
+  }
+  
+  .color-slider.green .fill {
+    fill: green;
+  }
+  
+  .color-slider.blue .fill {
+    fill: blue;
+  }
+  
+  .color-slider .thumb {
+    fill: #666;
+    stroke: currentcolor;
+    stroke-width: 2px;
+  }
+  
+  .color-slider .focus {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 2px;
+  }
+  
+  .color-slider:focus .value,
+  .color-slider:hover .value {
+    font-weight: bold;
+  }
+  
+  .color-slider:focus .fill,
+  .color-slider:hover .fill {
+    opacity: 1;
+  }
+  
+  .color-slider:focus .rail,
+  .color-slider:hover .rail {
+    fill: transparent;
+    stroke: currentcolor;
+    opacity: 1;
+  }
+  
+  .color-slider:focus .thumb,
+  .color-slider:hover .thumb {
+    fill: #ddd;
+    stroke: currentcolor;
+    opacity: 1;
+  }
+  
+  .color-slider:focus .focus,
+  .color-slider:hover .focus {
+    stroke: currentcolor;
+  }
+  
