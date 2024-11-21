@@ -1,5 +1,5 @@
 /**
- * @file main.cpp
+ * @file log.hpp
  * @author Artemia
  * @brief Test-ESP32 Project
  * @version 0.1
@@ -21,33 +21,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
+#ifndef LOG_HPP
+#define LOG_HPP
+
 #include <Arduino.h>
-#include "app.hpp"
-#include "webserver.hpp"
-#include "log.hpp"
+#include <mutex>
 
-CLog* Logger;
-CWebServer* WebServer;
-CApp* Application;
-
-/**
- * @brief Initialize MCU
- * 
- */
-
-void setup()
+class CLog
 {
-  Logger = new CLog();
-  WebServer = new CWebServer(*Logger);
-  Application = new CApp (*Logger, *WebServer);
-}
+public:
+    CLog();
+    ~CLog();
 
-/**
- * @brief Main loop of MCU
- * 
- */
-
-void loop()
-{
-  Application->Loop();
-}
+    /**
+     * @brief Send message to serial port
+     * 
+     * @param pMessage Message to display
+     * @param pCR Cariage Return if True
+     */
+    void Message(const String& pMessage, bool pCR=true);
+private:
+    /**
+     * @brief mutex to protect against concurent access
+     * 
+     */
+    std::mutex _mutex;
+};
+#endif

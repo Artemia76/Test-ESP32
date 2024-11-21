@@ -1,5 +1,5 @@
 /**
- * @file main.cpp
+ * @file log.cpp
  * @author Artemia
  * @brief Test-ESP32 Project
  * @version 0.1
@@ -21,33 +21,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-#include <Arduino.h>
-#include "app.hpp"
-#include "webserver.hpp"
 #include "log.hpp"
 
-CLog* Logger;
-CWebServer* WebServer;
-CApp* Application;
+/*****************************************************************************/
 
-/**
- * @brief Initialize MCU
- * 
- */
-
-void setup()
+CLog::CLog ()
 {
-  Logger = new CLog();
-  WebServer = new CWebServer(*Logger);
-  Application = new CApp (*Logger, *WebServer);
+    Serial.begin(115200);
+    //while(!Serial){} // Wait until serial monitor is online
+    Message ("Starting logging");
 }
 
-/**
- * @brief Main loop of MCU
- * 
- */
+/*****************************************************************************/
 
-void loop()
+CLog::~CLog ()
 {
-  Application->Loop();
+    Serial.end();
+}
+
+/*****************************************************************************/
+
+void CLog::Message (const String& pMessage, bool pCR)
+{
+    std::lock_guard<std::mutex> lck(_mutex);
+    if (Serial)
+    {
+        if (pCR)
+        {
+            Serial.println(pMessage);
+        }
+        else
+        {
+            Serial.print(pMessage);
+        }
+    }
 }
